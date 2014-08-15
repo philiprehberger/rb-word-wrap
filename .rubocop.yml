@@ -9,10 +9,47 @@ Style/Documentation:
 Style/FrozenStringLiteralComment:
   EnforcedStyle: always
 
-Metrics/BlockLength:
-  Exclude:
-    - "spec/**/*"
-    - "*.gemspec"
+Style/ExplicitBlockArgument:
+  Enabled: false
+
+Style/ArgumentsForwarding:
+  Enabled: false
+
+Style/FormatString:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Metrics:
+  Enabled: false
+
+Naming/BinaryOperatorParameterName:
+  Enabled: false
+
+Naming/PredicateMethod:
+  Enabled: false
+
+Naming/MethodParameterName:
+  MinNameLength: 1
+
+Naming/BlockForwarding:
+  Enabled: false
+
+Lint/DuplicateBranch:
+  Enabled: false
 
 Layout/LineLength:
   Max: 120
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: false
+
+Layout/LineEndStringConcatenationIndentation:
+  Enabled: false
+
+Layout/EndOfLine:
+  Enabled: false
+
+Bundler/OrderedGems:
+  Enabled: false
