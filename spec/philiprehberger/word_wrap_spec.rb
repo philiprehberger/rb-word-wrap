@@ -3,10 +3,6 @@
 require 'spec_helper'
 
 RSpec.describe Philiprehberger::WordWrap do
-  it 'has a version number' do
-    expect(Philiprehberger::WordWrap::VERSION).not_to be_nil
-  end
-
   describe '.wrap' do
     it 'returns short text unchanged when within width' do
       expect(described_class.wrap('hello world', width: 80)).to eq('hello world')
@@ -19,12 +15,6 @@ RSpec.describe Philiprehberger::WordWrap do
         expect(line.length).to be <= 20
       end
       expect(result).to eq("the quick brown fox\njumps over the lazy\ndog")
-    end
-
-    it 'wraps at exact boundary' do
-      text = 'abcde fghij'
-      result = described_class.wrap(text, width: 11)
-      expect(result).to eq('abcde fghij')
     end
 
     it 'never breaks mid-word when word fits on a line' do
@@ -54,7 +44,7 @@ RSpec.describe Philiprehberger::WordWrap do
       end
     end
 
-    it 'applies hanging indent with first_indent' do
+    it 'applies hanging indent with first_indent different from indent' do
       text = 'the quick brown fox jumps over the lazy dog'
       result = described_class.wrap(text, width: 25, first_indent: '- ', indent: '  ')
       lines = result.split("\n")
@@ -64,13 +54,7 @@ RSpec.describe Philiprehberger::WordWrap do
       end
     end
 
-    it 'preserves existing newlines as paragraph breaks' do
-      text = "first paragraph\nsecond paragraph"
-      result = described_class.wrap(text, width: 80)
-      expect(result).to eq("first paragraph\nsecond paragraph")
-    end
-
-    it 'wraps text containing ANSI escape codes correctly' do
+    it 'preserves ANSI codes but does not count them in width' do
       text = "\e[31mhello\e[0m \e[32mworld\e[0m beautiful day"
       result = described_class.wrap(text, width: 15)
       lines = result.split("\n")
@@ -82,12 +66,10 @@ RSpec.describe Philiprehberger::WordWrap do
       expect(result).to include("\e[32m")
     end
 
-    it 'raises Error for non-string input' do
-      expect { described_class.wrap(123, width: 80) }.to raise_error(Philiprehberger::WordWrap::Error)
-    end
-
-    it 'raises Error for non-positive width' do
-      expect { described_class.wrap('hello', width: 0) }.to raise_error(Philiprehberger::WordWrap::Error)
+    it 'preserves existing newlines as paragraph breaks' do
+      text = "first paragraph\nsecond paragraph"
+      result = described_class.wrap(text, width: 80)
+      expect(result).to eq("first paragraph\nsecond paragraph")
     end
   end
 
@@ -112,10 +94,6 @@ RSpec.describe Philiprehberger::WordWrap do
 
     it 'handles empty string' do
       expect(described_class.truncate('', width: 10)).to eq('')
-    end
-
-    it 'raises Error for non-string input' do
-      expect { described_class.truncate(nil, width: 10) }.to raise_error(Philiprehberger::WordWrap::Error)
     end
   end
 
