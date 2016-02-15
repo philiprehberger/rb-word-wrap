@@ -1,6 +1,7 @@
 # philiprehberger-word_wrap
 
 [![Gem Version](https://badge.fury.io/rb/philiprehberger-word_wrap.svg)](https://badge.fury.io/rb/philiprehberger-word_wrap)
+$badge_line
 [![CI](https://github.com/philiprehberger/rb-word-wrap/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/rb-word-wrap/actions/workflows/ci.yml)
 
 Text wrapping with word-boundary awareness, indentation, and ANSI support. Wraps text at word boundaries, supports hanging indent, and preserves ANSI escape codes in output.
