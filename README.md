@@ -3,6 +3,7 @@
 [![Tests](https://github.com/philiprehberger/rb-word-wrap/actions/workflows/ci.yml/badge.svg)](https://github.com/philiprehberger/rb-word-wrap/actions/workflows/ci.yml)
 [![Gem Version](https://badge.fury.io/rb/philiprehberger-word_wrap.svg)](https://rubygems.org/gems/philiprehberger-word_wrap)
 [![License](https://img.shields.io/github/license/philiprehberger/rb-word-wrap)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
 
 Text wrapping with word-boundary awareness, indentation, and ANSI escape code support
 
@@ -100,4 +101,4 @@ bundle exec rubocop
 
 ## License
 
-MIT
+[MIT](LICENSE)
