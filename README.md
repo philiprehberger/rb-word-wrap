@@ -62,6 +62,31 @@ Philiprehberger::WordWrap.visible_width("\e[31mhello\e[0m")
 # => 5
 ```
 
+### Justification
+
+Full text justification expands spaces to fill the line width:
+
+```ruby
+Philiprehberger::WordWrap.wrap('the quick brown fox jumps over the lazy dog', width: 30, justify: true)
+```
+
+### Center Alignment
+
+```ruby
+Philiprehberger::WordWrap.center('hello', width: 20)
+# => "       hello"
+```
+
+### Multi-Column Formatting
+
+```ruby
+Philiprehberger::WordWrap.columns(
+  ['Column one text here', 'Column two text'],
+  widths: [20, 20],
+  separator: ' | '
+)
+```
+
 ### Truncation
 
 Truncate text at a word boundary with a configurable omission string.
@@ -79,9 +104,11 @@ Philiprehberger::WordWrap.truncate('the quick brown fox', width: 18, omission: '
 
 | Method | Description |
 |--------|-------------|
-| `WordWrap.wrap(text, width: 80, indent: nil, first_indent: nil)` | Wrap text at word boundaries to fit within the given width. Words exceeding the line width are hard-wrapped. |
+| `WordWrap.wrap(text, width: 80, indent: nil, first_indent: nil, justify: false)` | Wrap text at word boundaries to fit within the given width. Words exceeding the line width are hard-wrapped. |
 | `WordWrap.truncate(text, width: 80, omission: '...')` | Truncate text at a word boundary, appending the omission string |
 | `WordWrap.visible_width(text)` | Return the visible character width, excluding ANSI escape codes |
+| `WordWrap.center(text, width: 80)` | Center text within the given width |
+| `WordWrap.columns(texts, widths:, separator: '  ')` | Format multiple strings into parallel columns |
 | `WordWrap::ANSI_PATTERN` | Regex matching ANSI escape sequences (`\e[...m`) |
 | `WordWrap.wrap_paragraph` (private) | Wrap a single paragraph, applying indent and first_indent per line |
 | `WordWrap.split_preserving_ansi` (private) | Split text into words while keeping ANSI codes attached to their word |

@@ -7,7 +7,7 @@ module Philiprehberger
     ANSI_PATTERN = /\e\[[0-9;]*m/
 
     class << self
-      def wrap(text, width: 80, indent: nil, first_indent: nil)
+      def wrap(text, width: 80, indent: nil, first_indent: nil, justify: false)
         indent ||= ''
         first_indent ||= indent
         paragraphs = text.split("\n")
@@ -16,7 +16,8 @@ module Philiprehberger
           wrap_paragraph(paragraph, width: width, indent: indent, first_indent: first_indent)
         end
 
-        wrapped_paragraphs.join("\n")
+        result = wrapped_paragraphs.join("\n")
+        justify ? justify_text(result, width) : result
       end
 
       def truncate(text, width: 80, omission: '...')
@@ -31,6 +32,42 @@ module Philiprehberger
 
       def visible_width(text)
         text.gsub(ANSI_PATTERN, '').length
+      end
+
+      # Center text within a given width
+      #
+      # @param text [String] the text to center
+      # @param width [Integer] the total width
+      # @return [String] centered text
+      def center(text, width: 80)
+        text.split("\n").map do |line|
+          vis_width = visible_width(line.strip)
+          padding = [(width - vis_width) / 2, 0].max
+          "#{' ' * padding}#{line.strip}"
+        end.join("\n")
+      end
+
+      # Format multiple strings into parallel columns
+      #
+      # @param texts [Array<String>] array of text strings, one per column
+      # @param widths [Array<Integer>] width of each column
+      # @param separator [String] separator between columns
+      # @return [String] multi-column formatted text
+      def columns(texts, widths:, separator: '  ')
+        wrapped = texts.each_with_index.map do |text, i|
+          wrap(text, width: widths[i]).split("\n")
+        end
+
+        max_lines = wrapped.map(&:length).max || 0
+
+        (0...max_lines).map do |line_idx|
+          wrapped.each_with_index.map do |col_lines, col_idx|
+            line = col_lines[line_idx] || ''
+            pad_width = widths[col_idx]
+            vis = visible_width(line)
+            line + (' ' * [(pad_width - vis), 0].max)
+          end.join(separator)
+        end.join("\n")
       end
 
       private
@@ -165,6 +202,41 @@ module Philiprehberger
         return '' if codes.last == "\e[0m"
 
         codes.last
+      end
+
+      def justify_text(text, width)
+        lines = text.split("\n")
+        return text if lines.length <= 1
+
+        lines[0..-2].map { |line| justify_line(line, width) }.append(lines.last).join("\n")
+      end
+
+      def justify_line(line, width)
+        stripped = line.lstrip
+        leading = line.length - stripped.length
+        indent_str = ' ' * leading
+        words = stripped.split(/\s+/)
+
+        return line if words.length <= 1
+
+        target = width - leading
+        total_word_width = words.sum { |w| visible_width(w) }
+        total_spaces = target - total_word_width
+        return line if total_spaces <= 0
+
+        gaps = words.length - 1
+        base_space = total_spaces / gaps
+        extra = total_spaces % gaps
+
+        result = +indent_str
+        words.each_with_index do |word, i|
+          result << word
+          if i < gaps
+            spaces = base_space + (i < extra ? 1 : 0)
+            result << (' ' * spaces)
+          end
+        end
+        result
       end
 
       def truncate_at_word_boundary(text, available)
