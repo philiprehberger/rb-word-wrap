@@ -258,6 +258,168 @@ RSpec.describe Philiprehberger::WordWrap do
     end
   end
 
+  describe '.hanging_indent' do
+    it 'keeps first line flush left' do
+      text = 'the quick brown fox jumps over the lazy dog'
+      result = described_class.hanging_indent(text, 25, indent: 4)
+      lines = result.split("\n")
+      expect(lines.first).not_to start_with(' ')
+    end
+
+    it 'indents subsequent lines by the specified amount' do
+      text = 'the quick brown fox jumps over the lazy dog'
+      result = described_class.hanging_indent(text, 25, indent: 4)
+      lines = result.split("\n")
+      lines[1..].each do |line|
+        expect(line).to start_with('    ')
+      end
+    end
+
+    it 'wraps multi-line text correctly' do
+      text = 'one two three four five six seven eight nine ten eleven twelve'
+      result = described_class.hanging_indent(text, 20, indent: 6)
+      lines = result.split("\n")
+      expect(lines.length).to be >= 3
+      expect(lines.first).not_to start_with(' ')
+      lines[1..].each { |line| expect(line).to start_with('      ') }
+    end
+
+    it 'handles short text that fits on one line' do
+      result = described_class.hanging_indent('hello', 80, indent: 4)
+      expect(result).to eq('hello')
+    end
+
+    it 'respects width for all lines' do
+      text = 'the quick brown fox jumps over the lazy dog near the river bank'
+      result = described_class.hanging_indent(text, 20, indent: 4)
+      result.split("\n").each do |line|
+        expect(described_class.visible_width(line)).to be <= 20
+      end
+    end
+  end
+
+  describe '.fit' do
+    it 'returns text unchanged when it fits within height' do
+      text = 'hello world'
+      result = described_class.fit(text, width: 80, height: 5)
+      expect(result).to eq('hello world')
+    end
+
+    it 'truncates to the specified number of lines' do
+      text = 'the quick brown fox jumps over the lazy dog near the river bank today'
+      result = described_class.fit(text, width: 15, height: 2)
+      lines = result.split("\n")
+      expect(lines.length).to eq(2)
+    end
+
+    it 'appends omission string to last line when truncated' do
+      text = 'the quick brown fox jumps over the lazy dog near the river bank today'
+      result = described_class.fit(text, width: 20, height: 2)
+      lines = result.split("\n")
+      expect(lines.last).to include('...')
+    end
+
+    it 'uses custom omission string' do
+      text = 'one two three four five six seven eight nine ten'
+      result = described_class.fit(text, width: 15, height: 1, omission: ' [more]')
+      expect(result).to include('[more]')
+    end
+
+    it 'handles exact fit without truncation' do
+      text = 'hello world foo bar'
+      result = described_class.fit(text, width: 10, height: 10)
+      wrapped = described_class.wrap(text, width: 10)
+      expect(result).to eq(wrapped)
+    end
+
+    it 'handles height of 1' do
+      text = 'the quick brown fox jumps over'
+      result = described_class.fit(text, width: 15, height: 1)
+      lines = result.split("\n")
+      expect(lines.length).to eq(1)
+    end
+  end
+
+  describe '.paragraphs' do
+    it 'wraps a single paragraph' do
+      text = 'the quick brown fox jumps over the lazy dog'
+      result = described_class.paragraphs(text, 20)
+      expect(result).to eq(described_class.wrap(text, width: 20))
+    end
+
+    it 'wraps multiple paragraphs independently' do
+      text = "first paragraph words here\n\nsecond paragraph words here"
+      result = described_class.paragraphs(text, 20)
+      parts = result.split("\n\n")
+      expect(parts.length).to eq(2)
+    end
+
+    it 'joins paragraphs with default single blank line' do
+      text = "para one\n\npara two"
+      result = described_class.paragraphs(text, 80)
+      expect(result).to eq("para one\n\npara two")
+    end
+
+    it 'joins paragraphs with custom spacing' do
+      text = "para one\n\npara two"
+      result = described_class.paragraphs(text, 80, spacing: 2)
+      expect(result).to eq("para one\n\n\npara two")
+    end
+
+    it 'handles three paragraphs' do
+      text = "one\n\ntwo\n\nthree"
+      result = described_class.paragraphs(text, 80)
+      parts = result.split("\n\n")
+      expect(parts.length).to eq(3)
+      expect(parts).to eq(%w[one two three])
+    end
+
+    it 'respects width for each paragraph' do
+      text = "the quick brown fox jumps over\n\nthe lazy dog sleeps near the river"
+      result = described_class.paragraphs(text, 15)
+      result.split("\n").each do |line|
+        next if line.empty?
+
+        expect(described_class.visible_width(line)).to be <= 15
+      end
+    end
+  end
+
+  describe '.unwrap' do
+    it 'removes single newlines within a paragraph' do
+      text = "the quick brown\nfox jumps over\nthe lazy dog"
+      result = described_class.unwrap(text)
+      expect(result).to eq('the quick brown fox jumps over the lazy dog')
+    end
+
+    it 'preserves paragraph boundaries (double newlines)' do
+      text = "first paragraph\nwith wrapping\n\nsecond paragraph\nwith wrapping"
+      result = described_class.unwrap(text)
+      parts = result.split("\n\n")
+      expect(parts.length).to eq(2)
+      expect(parts[0]).to eq('first paragraph with wrapping')
+      expect(parts[1]).to eq('second paragraph with wrapping')
+    end
+
+    it 'handles text with no newlines' do
+      text = 'already one line'
+      expect(described_class.unwrap(text)).to eq(text)
+    end
+
+    it 'handles multiple paragraphs' do
+      text = "para one\nline two\n\npara two\nline two\n\npara three"
+      result = described_class.unwrap(text)
+      parts = result.split("\n\n")
+      expect(parts.length).to eq(3)
+    end
+
+    it 'collapses extra spaces after unwrapping' do
+      text = "hello  \n world"
+      result = described_class.unwrap(text)
+      expect(result).not_to include('  ')
+    end
+  end
+
   describe '.columns' do
     it 'formats two columns side by side' do
       result = described_class.columns(
