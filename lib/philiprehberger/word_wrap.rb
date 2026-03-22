@@ -4,61 +4,35 @@ require_relative 'word_wrap/version'
 
 module Philiprehberger
   module WordWrap
-    class Error < StandardError; end
-
     ANSI_PATTERN = /\e\[[0-9;]*m/
 
-    # Wrap text to a given width at word boundaries
-    #
-    # @param text [String] the input text
-    # @param width [Integer] the maximum line width
-    # @param indent [String] string to prepend to each wrapped line
-    # @param first_indent [String, nil] string to prepend to the first line (overrides indent for line 1)
-    # @return [String] the wrapped text
-    # @raise [Error] if text is not a string
-    def self.wrap(text, width: 80, indent: '', first_indent: nil)
-      raise Error, 'text must be a String' unless text.is_a?(String)
-      raise Error, 'width must be a positive Integer' unless width.is_a?(Integer) && width.positive?
+    class << self
+      def wrap(text, width: 80, indent: nil, first_indent: nil)
+        indent ||= ''
+        first_indent ||= indent
+        paragraphs = text.split("\n")
 
-      first_indent ||= indent
-      paragraphs = text.split("\n")
+        wrapped_paragraphs = paragraphs.map do |paragraph|
+          wrap_paragraph(paragraph, width: width, indent: indent, first_indent: first_indent)
+        end
 
-      wrapped_paragraphs = paragraphs.map do |paragraph|
-        wrap_paragraph(paragraph, width: width, indent: indent, first_indent: first_indent)
+        wrapped_paragraphs.join("\n")
       end
 
-      wrapped_paragraphs.join("\n")
-    end
+      def truncate(text, width: 80, omission: '...')
+        return text if visible_width(text) <= width
 
-    # Truncate text to a given width at a word boundary
-    #
-    # @param text [String] the input text
-    # @param width [Integer] the maximum width including omission
-    # @param omission [String] the string to append when truncated
-    # @return [String] the truncated text
-    # @raise [Error] if text is not a string
-    def self.truncate(text, width: 80, omission: '...')
-      raise Error, 'text must be a String' unless text.is_a?(String)
-      raise Error, 'width must be a positive Integer' unless width.is_a?(Integer) && width.positive?
+        omission_width = visible_width(omission)
+        available = width - omission_width
+        return omission if available <= 0
 
-      return text if visible_width(text) <= width
+        truncate_at_word_boundary(text, available) + omission
+      end
 
-      omission_width = visible_width(omission)
-      available = width - omission_width
-      return omission if available <= 0
+      def visible_width(text)
+        text.gsub(ANSI_PATTERN, '').length
+      end
 
-      truncate_at_word_boundary(text, available) + omission
-    end
-
-    # Calculate the visible width of a string, ignoring ANSI escape codes
-    #
-    # @param text [String] the input text
-    # @return [Integer] the visible character width
-    def self.visible_width(text)
-      text.gsub(ANSI_PATTERN, '').length
-    end
-
-    class << self
       private
 
       def wrap_paragraph(paragraph, width:, indent:, first_indent:)
@@ -158,7 +132,7 @@ module Philiprehberger
         ansi_state = +''
 
         while visible_width(remaining) > max_width
-          chunk, remaining = split_at_visible(remaining, max_width, ansi_state)
+          chunk, remaining = split_at_visible(remaining, max_width)
           chunks << chunk
           ansi_state = extract_active_ansi(chunk)
           remaining = "#{ansi_state}#{remaining}" unless ansi_state.empty?
@@ -168,14 +142,13 @@ module Philiprehberger
         chunks
       end
 
-      def split_at_visible(text, width, _ansi_state)
+      def split_at_visible(text, width)
         visible_count = 0
         byte_pos = 0
-        scanner = text.dup
 
-        while byte_pos < scanner.length && visible_count < width
-          if scanner[byte_pos..].match?(/\A\e\[[0-9;]*m/)
-            match = scanner[byte_pos..].match(/\A\e\[[0-9;]*m/)[0]
+        while byte_pos < text.length && visible_count < width
+          if text[byte_pos..].match?(/\A\e\[[0-9;]*m/)
+            match = text[byte_pos..].match(/\A\e\[[0-9;]*m/)[0]
             byte_pos += match.length
           else
             byte_pos += 1
