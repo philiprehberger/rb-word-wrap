@@ -4,7 +4,7 @@
 [![Gem Version](https://badge.fury.io/rb/philiprehberger-word_wrap.svg)](https://rubygems.org/gems/philiprehberger-word_wrap)
 [![License](https://img.shields.io/github/license/philiprehberger/rb-word-wrap)](LICENSE)
 
-Text wrapping with word-boundary awareness, indentation, and ANSI support. Wraps text at word boundaries, supports hanging indent, and preserves ANSI escape codes in output.
+Text wrapping with word-boundary awareness, indentation, and ANSI escape code support
 
 ## Requirements
 
@@ -12,14 +12,16 @@ Text wrapping with word-boundary awareness, indentation, and ANSI support. Wraps
 
 ## Installation
 
-```sh
-gem install philiprehberger-word_wrap
-```
-
-Or add to your Gemfile:
+Add to your Gemfile:
 
 ```ruby
-gem 'philiprehberger-word_wrap'
+gem "philiprehberger-word_wrap"
+```
+
+Or install directly:
+
+```bash
+gem install philiprehberger-word_wrap
 ```
 
 ## Usage
@@ -65,7 +67,7 @@ Returns the visible character width of a string, excluding ANSI escape codes.
 
 ## Development
 
-```sh
+```bash
 bundle install
 bundle exec rspec
 bundle exec rubocop
@@ -73,4 +75,4 @@ bundle exec rubocop
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT

@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ['philiprehberger']
   spec.email = ['philiprehberger@users.noreply.github.com']
 
-  spec.summary = 'Text wrapping with word-boundary awareness, indentation, and ANSI support'
+  spec.summary = 'Text wrapping with word-boundary awareness, indentation, and ANSI escape code support'
   spec.description = 'Wrap text to a specific width at word boundaries. Supports indentation, ' \
                      'hanging indent, ANSI escape code-safe width calculation, and truncation ' \
                      'with configurable omission strings.'
