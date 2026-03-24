@@ -53,17 +53,11 @@ Philiprehberger::WordWrap.truncate('the quick brown fox', width: 15)
 
 ## API
 
-### `WordWrap.wrap(text, width: 80, indent: nil, first_indent: nil)`
-
-Wraps text at word boundaries to fit within the given width. If `indent` is provided, it is prepended to each line. If `first_indent` is provided, it overrides `indent` for the first line only (hanging indent). Words longer than the available width are hard-wrapped.
-
-### `WordWrap.truncate(text, width: 80, omission: '...')`
-
-Truncates text at a word boundary to fit within the given width, appending the omission string. ANSI escape codes are excluded from width calculation.
-
-### `WordWrap.visible_width(text)`
-
-Returns the visible character width of a string, excluding ANSI escape codes.
+| Method | Description |
+|--------|-------------|
+| `WordWrap.wrap(text, width: 80, indent: nil, first_indent: nil)` | Wrap text at word boundaries to fit within the given width |
+| `WordWrap.truncate(text, width: 80, omission: '...')` | Truncate text at a word boundary with omission string |
+| `WordWrap.visible_width(text)` | Return the visible character width excluding ANSI escape codes |
 
 ## Development
 
