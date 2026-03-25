@@ -27,7 +27,7 @@ gem install philiprehberger-word_wrap
 ## Usage
 
 ```ruby
-require 'philiprehberger/word_wrap'
+require "philiprehberger/word_wrap"
 
 # Basic wrapping
 Philiprehberger::WordWrap.wrap('the quick brown fox jumps over the lazy dog', width: 20)
