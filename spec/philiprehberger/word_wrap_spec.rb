@@ -217,4 +217,76 @@ RSpec.describe Philiprehberger::WordWrap do
       expect(result.length).to be <= 5
     end
   end
+
+  describe '.wrap with justify' do
+    it 'justifies text to fill width' do
+      text = 'the quick brown fox jumps over the lazy dog near the river'
+      result = described_class.wrap(text, width: 30, justify: true)
+      lines = result.split("\n")
+      # All lines except the last should be exactly 30 chars (or close due to word boundaries)
+      lines[0..-2].each do |line|
+        expect(line.length).to be >= 28
+      end
+    end
+
+    it 'does not justify single-line text' do
+      result = described_class.wrap('short text', width: 80, justify: true)
+      expect(result).to eq('short text')
+    end
+  end
+
+  describe '.center' do
+    it 'centers text within width' do
+      result = described_class.center('hello', width: 20)
+      expect(result).to include('hello')
+      expect(result.length).to be >= 5
+      leading = result.index('h')
+      expect(leading).to be > 0
+    end
+
+    it 'centers multiple lines' do
+      result = described_class.center("hello\nworld", width: 20)
+      lines = result.split("\n")
+      lines.each do |line|
+        expect(line.strip).to match(/\A\w+\z/)
+      end
+    end
+
+    it 'handles text wider than width' do
+      result = described_class.center('hello world', width: 5)
+      expect(result.strip).to eq('hello world')
+    end
+  end
+
+  describe '.columns' do
+    it 'formats two columns side by side' do
+      result = described_class.columns(
+        ['hello world', 'foo bar'],
+        widths: [15, 15],
+        separator: ' | '
+      )
+      lines = result.split("\n")
+      expect(lines.length).to be >= 1
+      expect(lines.first).to include('hello world')
+      expect(lines.first).to include('foo bar')
+    end
+
+    it 'handles columns of different lengths' do
+      result = described_class.columns(
+        ["line one\nline two\nline three", 'short'],
+        widths: [15, 15]
+      )
+      lines = result.split("\n")
+      expect(lines.length).to eq(3)
+    end
+
+    it 'wraps text within column widths' do
+      result = described_class.columns(
+        ['the quick brown fox', 'hello world'],
+        widths: [10, 15]
+      )
+      lines = result.split("\n")
+      expect(lines.length).to be >= 2
+    end
+  end
 end

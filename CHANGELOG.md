@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-04-01
+
+### Added
+- `justify:` parameter for `wrap` method to enable full text justification
+- `WordWrap.center(text, width:)` for center-aligned text
+- `WordWrap.columns(texts, widths:, separator:)` for multi-column formatting
+
+### Fixed
+- Fix gemspec authors to `['Philip Rehberger']`
+- Fix gemspec email to `['me@philiprehberger.com']`
+- Fix gemspec required_ruby_version to `'>= 3.1.0'`
+
 ## [0.1.10] - 2026-03-31
 
 ### Added

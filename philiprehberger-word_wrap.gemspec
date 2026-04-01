@@ -5,8 +5,8 @@ require_relative 'lib/philiprehberger/word_wrap/version'
 Gem::Specification.new do |spec|
   spec.name = 'philiprehberger-word_wrap'
   spec.version = Philiprehberger::WordWrap::VERSION
-  spec.authors = ['philiprehberger']
-  spec.email = ['philiprehberger@users.noreply.github.com']
+  spec.authors = ['Philip Rehberger']
+  spec.email = ['me@philiprehberger.com']
 
   spec.summary = 'Text wrapping with word-boundary awareness, indentation, and ANSI escape code support'
   spec.description = 'Wrap text to a specific width at word boundaries. Supports indentation, ' \
@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
                      'with configurable omission strings.'
   spec.homepage = 'https://philiprehberger.com/open-source-packages/ruby/philiprehberger-word_wrap'
   spec.license = 'MIT'
-  spec.required_ruby_version = '>= 3.1'
+  spec.required_ruby_version = '>= 3.1.0'
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/philiprehberger/rb-word-wrap'
