@@ -70,6 +70,71 @@ module Philiprehberger
         end.join("\n")
       end
 
+      # Wrap text with a hanging indent where the first line is flush left
+      # and subsequent lines are indented
+      #
+      # @param text [String] the text to wrap
+      # @param width [Integer] the total line width
+      # @param indent [Integer] number of spaces to indent subsequent lines
+      # @return [String] wrapped text with hanging indent
+      def hanging_indent(text, width, indent:)
+        indent_str = ' ' * indent
+        wrap(text, width: width, first_indent: '', indent: indent_str)
+      end
+
+      # Wrap text to width, then truncate to at most height lines
+      #
+      # @param text [String] the text to wrap and fit
+      # @param width [Integer] the line width
+      # @param height [Integer] the maximum number of lines
+      # @param omission [String] string to append when truncated
+      # @return [String] wrapped and height-truncated text
+      def fit(text, width:, height:, omission: '...')
+        wrapped = wrap(text, width: width)
+        lines = wrapped.split("\n")
+
+        return wrapped if lines.length <= height
+
+        truncated_lines = lines[0...height]
+        last_line = truncated_lines.last
+        omission_width = visible_width(omission)
+        available = width - omission_width
+
+        truncated_lines[-1] = if available <= 0
+                                omission[0...width]
+                              elsif visible_width(last_line) > available
+                                truncate_at_word_boundary(last_line, available) + omission
+                              else
+                                "#{last_line}#{omission}"
+                              end
+
+        truncated_lines.join("\n")
+      end
+
+      # Split on double newlines, wrap each paragraph independently,
+      # and rejoin with spacing blank lines
+      #
+      # @param text [String] the text containing paragraphs
+      # @param width [Integer] the line width
+      # @param spacing [Integer] number of blank lines between paragraphs
+      # @return [String] wrapped paragraphs joined with spacing
+      def paragraphs(text, width, spacing: 1)
+        parts = text.split(/\n{2,}/)
+        wrapped_parts = parts.map { |para| wrap(para.strip, width: width) }
+        separator = "\n#{"\n" * spacing}"
+        wrapped_parts.join(separator)
+      end
+
+      # Remove single newlines within paragraphs (rejoin soft-wrapped text)
+      # while preserving paragraph boundaries (double newlines)
+      #
+      # @param text [String] the soft-wrapped text
+      # @return [String] unwrapped text with paragraph boundaries preserved
+      def unwrap(text)
+        paragraphs = text.split(/\n{2,}/)
+        paragraphs.map { |para| para.gsub("\n", ' ').squeeze(' ').strip }.join("\n\n")
+      end
+
       private
 
       def wrap_paragraph(paragraph, width:, indent:, first_indent:)

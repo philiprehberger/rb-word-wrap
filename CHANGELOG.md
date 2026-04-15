@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-04-14
+
+### Added
+- `WordWrap.hanging_indent(text, width, indent:)` for wrapping with flush-left first line and indented continuation lines
+- `WordWrap.fit(text, width:, height:, omission:)` to wrap text and truncate to a maximum number of lines
+- `WordWrap.paragraphs(text, width, spacing:)` to wrap paragraphs independently and rejoin with configurable spacing
+- `WordWrap.unwrap(text)` to remove soft wraps while preserving paragraph boundaries
+
 ## [0.2.0] - 2026-04-01
 
 ### Added

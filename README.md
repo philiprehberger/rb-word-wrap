@@ -87,6 +87,46 @@ Philiprehberger::WordWrap.columns(
 )
 ```
 
+### Hanging Indent
+
+Wrap text where the first line is flush left and subsequent lines are indented. Useful for bullet lists and definition formatting.
+
+```ruby
+Philiprehberger::WordWrap.hanging_indent('the quick brown fox jumps over the lazy dog', 25, indent: 4)
+# => "the quick brown fox\n    jumps over the lazy\n    dog"
+```
+
+### Fit to Box
+
+Wrap text to a width, then truncate to at most a given number of lines. If truncated, an omission string is appended to the last line.
+
+```ruby
+Philiprehberger::WordWrap.fit('the quick brown fox jumps over the lazy dog', width: 20, height: 2)
+# => "the quick brown fox\njumps over the..."
+```
+
+### Paragraph Wrapping
+
+Split text on double newlines, wrap each paragraph independently, and rejoin with configurable spacing.
+
+```ruby
+text = "First paragraph here.\n\nSecond paragraph here."
+Philiprehberger::WordWrap.paragraphs(text, 30)
+
+# Custom spacing (2 blank lines between paragraphs)
+Philiprehberger::WordWrap.paragraphs(text, 30, spacing: 2)
+```
+
+### Unwrap
+
+Remove single newlines within paragraphs (rejoin soft-wrapped text) while preserving paragraph boundaries.
+
+```ruby
+text = "the quick brown\nfox jumps over\n\nthe lazy dog\nsleeps"
+Philiprehberger::WordWrap.unwrap(text)
+# => "the quick brown fox jumps over\n\nthe lazy dog sleeps"
+```
+
 ### Truncation
 
 Truncate text at a word boundary with a configurable omission string.
@@ -105,6 +145,10 @@ Philiprehberger::WordWrap.truncate('the quick brown fox', width: 18, omission: '
 | Method | Description |
 |--------|-------------|
 | `WordWrap.wrap(text, width: 80, indent: nil, first_indent: nil, justify: false)` | Wrap text at word boundaries to fit within the given width. Words exceeding the line width are hard-wrapped. |
+| `WordWrap.hanging_indent(text, width, indent:)` | Wrap text with first line flush left and subsequent lines indented by `indent` spaces |
+| `WordWrap.fit(text, width:, height:, omission: '...')` | Wrap text to width, then truncate to at most `height` lines with omission string |
+| `WordWrap.paragraphs(text, width, spacing: 1)` | Split on double newlines, wrap each paragraph independently, rejoin with `spacing` blank lines |
+| `WordWrap.unwrap(text)` | Remove single newlines within paragraphs, preserving paragraph boundaries (double newlines) |
 | `WordWrap.truncate(text, width: 80, omission: '...')` | Truncate text at a word boundary, appending the omission string |
 | `WordWrap.visible_width(text)` | Return the visible character width, excluding ANSI escape codes |
 | `WordWrap.center(text, width: 80)` | Center text within the given width |
