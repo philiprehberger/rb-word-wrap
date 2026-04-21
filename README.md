@@ -60,6 +60,10 @@ Philiprehberger::WordWrap.wrap(text, width: 8)
 # Check visible width without ANSI codes
 Philiprehberger::WordWrap.visible_width("\e[31mhello\e[0m")
 # => 5
+
+# Strip ANSI codes and return the plain string
+Philiprehberger::WordWrap.strip_ansi("\e[31mhello\e[0m")
+# => "hello"
 ```
 
 ### Justification
@@ -151,6 +155,7 @@ Philiprehberger::WordWrap.truncate('the quick brown fox', width: 18, omission: '
 | `WordWrap.unwrap(text)` | Remove single newlines within paragraphs, preserving paragraph boundaries (double newlines) |
 | `WordWrap.truncate(text, width: 80, omission: '...')` | Truncate text at a word boundary, appending the omission string |
 | `WordWrap.visible_width(text)` | Return the visible character width, excluding ANSI escape codes |
+| `WordWrap.strip_ansi(text)` | Return a copy of `text` with all ANSI escape codes removed |
 | `WordWrap.center(text, width: 80)` | Center text within the given width |
 | `WordWrap.columns(texts, widths:, separator: '  ')` | Format multiple strings into parallel columns |
 | `WordWrap::ANSI_PATTERN` | Regex matching ANSI escape sequences (`\e[...m`) |
