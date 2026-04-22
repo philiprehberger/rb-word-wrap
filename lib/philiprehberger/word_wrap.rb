@@ -34,6 +34,14 @@ module Philiprehberger
         text.gsub(ANSI_PATTERN, '').length
       end
 
+      # Remove ANSI escape codes from text, returning the plain visible string.
+      #
+      # @param text [String] the text to strip
+      # @return [String] text with all ANSI escape codes removed
+      def strip_ansi(text)
+        text.gsub(ANSI_PATTERN, '')
+      end
+
       # Center text within a given width
       #
       # @param text [String] the text to center

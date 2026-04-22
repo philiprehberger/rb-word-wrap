@@ -451,4 +451,28 @@ RSpec.describe Philiprehberger::WordWrap do
       expect(lines.length).to be >= 2
     end
   end
+
+  describe '.strip_ansi' do
+    it 'returns plain text unchanged' do
+      expect(described_class.strip_ansi('hello world')).to eq('hello world')
+    end
+
+    it 'removes ANSI color escape codes' do
+      colored = "\e[31mred\e[0m and \e[32mgreen\e[0m"
+      expect(described_class.strip_ansi(colored)).to eq('red and green')
+    end
+
+    it 'removes multi-attribute ANSI sequences' do
+      text = "\e[1;4;36mbold underline cyan\e[0m"
+      expect(described_class.strip_ansi(text)).to eq('bold underline cyan')
+    end
+
+    it 'returns an empty string for empty input' do
+      expect(described_class.strip_ansi('')).to eq('')
+    end
+
+    it 'leaves non-color escape codes intact when they are not color sequences' do
+      expect(described_class.strip_ansi("plain\ttext")).to eq("plain\ttext")
+    end
+  end
 end
