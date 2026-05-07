@@ -131,6 +131,21 @@ Philiprehberger::WordWrap.unwrap(text)
 # => "the quick brown fox jumps over\n\nthe lazy dog sleeps"
 ```
 
+### Re-indenting Pre-wrapped Text
+
+Prepend an indent to every line of an already-wrapped string. Optionally use a different `first_indent` for the first line.
+
+```ruby
+require 'philiprehberger/word_wrap'
+
+text = "first line\nsecond line\nthird line"
+Philiprehberger::WordWrap.indent_lines(text, '  ')
+# => "  first line\n  second line\n  third line"
+
+Philiprehberger::WordWrap.indent_lines(text, '  ', first_indent: '* ')
+# => "* first line\n  second line\n  third line"
+```
+
 ### Truncation
 
 Truncate text at a word boundary with a configurable omission string.
@@ -150,6 +165,7 @@ Philiprehberger::WordWrap.truncate('the quick brown fox', width: 18, omission: '
 |--------|-------------|
 | `WordWrap.wrap(text, width: 80, indent: nil, first_indent: nil, justify: false)` | Wrap text at word boundaries to fit within the given width. Words exceeding the line width are hard-wrapped. |
 | `WordWrap.hanging_indent(text, width, indent:)` | Wrap text with first line flush left and subsequent lines indented by `indent` spaces |
+| `WordWrap.indent_lines(text, indent, first_indent:)` | Prepend indent to every line; optional first_indent for the first line |
 | `WordWrap.fit(text, width:, height:, omission: '...')` | Wrap text to width, then truncate to at most `height` lines with omission string |
 | `WordWrap.paragraphs(text, width, spacing: 1)` | Split on double newlines, wrap each paragraph independently, rejoin with `spacing` blank lines |
 | `WordWrap.unwrap(text)` | Remove single newlines within paragraphs, preserving paragraph boundaries (double newlines) |

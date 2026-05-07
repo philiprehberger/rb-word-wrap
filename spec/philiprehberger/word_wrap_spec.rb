@@ -452,6 +452,41 @@ RSpec.describe Philiprehberger::WordWrap do
     end
   end
 
+  describe '.indent_lines' do
+    it 'prepends indent to a single line' do
+      expect(described_class.indent_lines('text', '  ')).to eq('  text')
+    end
+
+    it 'prepends indent to every line of multi-line text' do
+      text = "first line\nsecond line\nthird line"
+      result = described_class.indent_lines(text, '> ')
+      expect(result).to eq("> first line\n> second line\n> third line")
+    end
+
+    it 'returns an empty string for empty input' do
+      expect(described_class.indent_lines('', '  ')).to eq('')
+    end
+
+    it 'uses first_indent for the first line and indent for the rest' do
+      text = "first line\nsecond line\nthird line"
+      result = described_class.indent_lines(text, '  ', first_indent: '* ')
+      expect(result).to eq("* first line\n  second line\n  third line")
+    end
+
+    it 'preserves blank interior lines and indents them too' do
+      text = "a\n\nb"
+      result = described_class.indent_lines(text, '> ')
+      expect(result).to eq("> a\n> \n> b")
+    end
+
+    it 'preserves shape for text without a trailing newline' do
+      text = "one\ntwo"
+      result = described_class.indent_lines(text, '  ')
+      expect(result).to eq("  one\n  two")
+      expect(result).not_to end_with("\n")
+    end
+  end
+
   describe '.strip_ansi' do
     it 'returns plain text unchanged' do
       expect(described_class.strip_ansi('hello world')).to eq('hello world')

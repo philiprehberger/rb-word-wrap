@@ -90,6 +90,25 @@ module Philiprehberger
         wrap(text, width: width, first_indent: '', indent: indent_str)
       end
 
+      # Prepend an indent to every line of +text+. The first line may use a
+      # different indent if +first_indent+ is provided.
+      #
+      # Useful when the text is already wrapped (for example, came from another
+      # source) and only needs re-indenting. For wrap-and-indent in one step,
+      # use +wrap+. For a hanging-indent first-line outdent, use +hanging_indent+.
+      #
+      # @param text [String] the text whose lines should be indented
+      # @param indent [String] indent for every line (and for the first line when
+      #   +first_indent+ is nil)
+      # @param first_indent [String, nil] optional override for the first line
+      # @return [String] the re-indented text
+      def indent_lines(text, indent, first_indent: nil)
+        first_indent ||= indent
+        text.split("\n").each_with_index.map do |line, i|
+          "#{i.zero? ? first_indent : indent}#{line}"
+        end.join("\n")
+      end
+
       # Wrap text to width, then truncate to at most height lines
       #
       # @param text [String] the text to wrap and fit
